@@ -4,19 +4,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'company_info.dart';
 
-class AddDigitalAssetsDialog extends StatefulWidget {
+class NewAssetButtonWidget extends StatefulWidget {
   @override
 
   final String entityId;
 
-  AddDigitalAssetsDialog(this.entityId);
+  NewAssetButtonWidget(this.entityId);
 
   State<StatefulWidget> createState() {
     return _SelectedValueState(entityId);
   }
 }
 
-class _SelectedValueState extends State<AddDigitalAssetsDialog> {
+class _SelectedValueState extends State<NewAssetButtonWidget> {
   var _currentAssetTitle;
 
   final String _entityId;
