@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fairsite/common.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,19 +47,33 @@ class Lists extends ConsumerWidget {
               children: ref.watch(colSP('company')).when(
                   loading: () => [Container()],
                   error: (e, s) => [ErrorWidget(e)],
-                  data: (entities) => (entities.docs
-                      // ((ref.watch(filterMine) ?? false)
-                      //       ? entities.docs
-                      //           .where((d) =>
-                      //               d['author'] ==
-                      //               FirebaseAuth.instance.currentUser!.uid)
-                      //           .toList()
-                      //       : entities.docs)
-                      // ..sort((a, b) => a[ref.watch(activeSort) ?? 'id']
-                      //     .compareTo(b[ref.watch(activeSort) ?? 'id']))
-                      )
-                      .map((entity) => ListItem(entity.id))
-                      .toList()))
+                  data: (entities) {
+                    List<Widget> memberCompany = [];
+                    var companyList = entities.docs.map((e) {
+                      ref
+                          .watch(docSP(
+                              'company/${e.id}/member/${CURRENT_USER.uid}'))
+                          .when(
+                              loading: () => Container(),
+                              error: (e, s) => ErrorWidget(e),
+                              data: (memberDoc) => memberDoc.exists
+                                  ? memberCompany.add(ListItem(e.id))
+                                  : memberCompany.add(SizedBox(
+                                      width: 0,
+                                      height: 0,
+                                    )));
+                    }).toList();
+                    return memberCompany;
+                  }))
+          // ((ref.watch(filterMine) ?? false)
+          //       ? entities.docs
+          //           .where((d) =>
+          //               d['author'] ==
+          //               FirebaseAuth.instance.currentUser!.uid)
+          //           .toList()
+          //       : entities.docs)
+          // ..sort((a, b) => a[ref.watch(activeSort) ?? 'id']
+          //     .compareTo(b[ref.watch(activeSort) ?? 'id']))
         ],
       );
 }
